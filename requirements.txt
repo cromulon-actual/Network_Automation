@@ -8,3 +8,4 @@ nornir_netbox
 requests
 urllib3
 -e git://github.com/efenian/phpipamsdk#egg=phpipamsdk
+tqdm
