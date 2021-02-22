@@ -1,0 +1,10 @@
+nornir
+nornir_napalm
+nornir_netmiko
+nornir_jinja2
+nornir_scrapli
+nornir_utils
+nornir_netbox
+requests
+urllib3
+-e git://github.com/efenian/phpipamsdk#egg=phpipamsdk

@@ -1,0 +1,8 @@
+---
+
+inventory:
+    plugin: SimpleInventory
+    options:
+        host_file: "inventory/hosts_netmiko.yaml"
+        group_file: "inventory/groups.yaml"
+        defaults_file: "inventory/defaults.yaml"
