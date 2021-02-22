@@ -133,6 +133,8 @@ dmypy.json
 
 # Local files
 saved/
+local_files/
+test_scripts/
 inventory/
 devel_folder/
 modules/nice.py
