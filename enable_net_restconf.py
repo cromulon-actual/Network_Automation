@@ -4,6 +4,8 @@ from nornir_napalm.plugins.tasks import napalm_get, napalm_configure, napalm_cli
 from nornir_utils.plugins.tasks.files import write_file
 from tqdm import tqdm
 
+nr = InitNornir('files/config.yaml')
+
 
 def run_tasks(task, *args, **kwargs):
     def wrapper(*args, **kwargs):
@@ -60,7 +62,8 @@ def save_config(task, napalm_get_bar=None, pre=False, post=False):
     tqdm.write(f"{task.host}: {phase} running-config gathered")
 
 
-def enable_net_restconf(task, core=False, access=False):
+@run_tasks
+def enable_net_restconf(task, napalm_get_bar):
     """[summary]
 
     Args:
@@ -69,10 +72,16 @@ def enable_net_restconf(task, core=False, access=False):
         core (bool, optional): Flag for Nexus switches. Defaults to False.
         access (bool, optional): Flag for access switches. Defaults to False.
     """
-    if core:
-        commands = []
 
-    elif access:
+    if task.host in nr.filter(F(groups__contains="NX-OS")).inventory.hosts:
+        commands = [
+            'show clock',
+            'show ssh server'
+        ]
+
+        r = task.run(task=napalm_cli, commands=commands)
+
+    elif task.host in nr.filter(F(groups__contains="c3850")).inventory.hosts:
         # commands = [
         #     'netconf-yang',
         #     'netconf-yang feature candidate-datastore',
@@ -83,32 +92,36 @@ def enable_net_restconf(task, core=False, access=False):
             'show clock'
         ]
 
-    r = task.run(task=napalm_cli, commands=commands)
+        r = task.run(task=napalm_cli, commands=commands)
 
-    print(r.result.keys())
+    for result in r.result:
+        print(r.result[result])
 
     # task.run(
     #     task=write_file,
     #     content=r.result
     # )
 
+    napalm_get_bar.update()
+    tqdm.write(f"{task.host}: running-config gathered")
+
 
 def main():
-    nr = InitNornir('files/config.yaml')
 
     cib_infra = nr.filter(F(groups__contains='infrastructure'))
 
+    # print(cib_infra.inventory.hosts)
+
     # Get pre-implementation running-configs
-    save_config(cib_infra, pre=True, post=False)
-
+    # save_config(cib_infra, pre=True, post=False)
     switches_nexus = nr.filter(F(groups__contains="NX-OS"))
-
     # Configure NETCONF and RESTCONF
+    enable_net_restconf(switches_nexus)
 
     switches_3850 = nr.filter(F(groups__contains="c3850"))
 
     # Get post-implementation running-configs
-    save_config(cib_infra, pre=False, post=True)
+    # save_config(cib_infra, pre=False, post=True)
 
 
 if __name__ == '__main__':
