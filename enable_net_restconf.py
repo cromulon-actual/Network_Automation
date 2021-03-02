@@ -141,7 +141,7 @@ def post_net_restconf(task, napalm_get_bar=None):
             'show platform software yang-management process'
         ]
 
-    r = task.run(task=napalm_cli, commands=commands)
+        r = task.run(task=napalm_cli, commands=commands)
 
     with open(f'local_files/implementation/validation/{str(task.host)}.txt', 'w') as f:
         for command in commands:
@@ -151,14 +151,16 @@ def post_net_restconf(task, napalm_get_bar=None):
     napalm_get_bar.update()
     tqdm.write(f"{task.host}: Commands ({commands}) gathered.")
 
+    napalm_get_bar.update()
+    tqdm.write(f"{task.host}: running-config gathered")
+
 
 def main():
     ##############################################
     ######## Pre-Implementation copy-run  ########
     ##############################################
 
-    # Get pre-implementation running-configs
-    save_config(cib_infra, pre=True, post=False)
+    # print(cib_infra.inventory.hosts)
 
     ##############################################
     ####### Configure NETCONF and RESTCONF #######
@@ -185,7 +187,7 @@ def main():
     ##############################################
 
     # Get post-implementation running-configs
-    save_config(cib_infra, pre=False, post=True)
+    # save_config(cib_infra, pre=False, post=True)
 
 
 if __name__ == '__main__':
