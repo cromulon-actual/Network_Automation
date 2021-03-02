@@ -26,7 +26,8 @@ def get_running_configs(task, napalm_get_bar):
 
 
 def main():
-    nr = InitNornir("files/config.yaml")
+    nr = InitNornir("files/gns_config.yaml")
+    print(nr.inventory.hosts)
 
     with tqdm(
         total=len(nr.inventory.hosts), desc="gathering running-configs",
