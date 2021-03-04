@@ -5,6 +5,9 @@ nornir_jinja2
 nornir_scrapli
 nornir_utils
 nornir_netbox
+pyOpenSSL
+pyyaml
+xmltodict
 requests
 urllib3
 -e git://github.com/efenian/phpipamsdk#egg=phpipamsdk
