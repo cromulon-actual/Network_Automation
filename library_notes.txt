@@ -1,0 +1,12 @@
+For napalm_get cli to work, the method for cli in napalm needs to be renamed to get_cli.
+
+For napalm_get get_network_instances to work the ios driver in ios.py needs to have a conditional statement to only delete 
+'item' from instances["default"]["interfaces"]["interface"] if it exists.
+
+```
+ if item in instances["default"]["interfaces"]["interface"]:
+     del instances["default"]["interfaces"]["interface"][item]
+
+For use_textfsm=True to work, an environment variable set in the venv bin/activate needs to include the following in order for pathlib to find it:
+export NET_TEXTFSM="./lib/python3.9/site-packages/ntc_templates/templates"
+Don't forget to source bin/activate
