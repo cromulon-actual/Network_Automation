@@ -10,5 +10,6 @@ pyyaml
 xmltodict
 requests
 urllib3
+pyats[library]
 -e git://github.com/efenian/phpipamsdk#egg=phpipamsdk
 tqdm

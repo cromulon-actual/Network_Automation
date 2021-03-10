@@ -26,12 +26,19 @@ nr = InitNornir("files/config.yaml")
 infrastructure = nr.filter(F(groups__contains='infrastructure'))
 
 
-DOMAIN = os.environ['DOMAIN']  # .domain.com
-COUNTRY = os.environ['COUNTRY']  # US
-STATE = os.environ['STATE']  # Florida
-CITY = os.environ['CITY']  # Miami
-ORG = os.environ['ORGANIZATION']  # CompanyXYZ
-OU = os.environ['OU']  # IT
+# DOMAIN = os.environ['DOMAIN']  # .domain.com
+# COUNTRY = os.environ['COUNTRY']  # US
+# STATE = os.environ['STATE']  # Florida
+# CITY = os.environ['CITY']  # Miami
+# ORG = os.environ['ORGANIZATION']  # CompanyXYZ
+# OU = os.environ['OU']  # IT
+
+DOMAIN = 'carcgl.com'  # .domain.com
+COUNTRY = 'US'  # US
+STATE = 'FL'  # Florida
+CITY = 'Palm Beach Gardens'  # Miami
+ORG = 'Carrier'  # CompanyXYZ
+OU = 'IT'  # IT
 
 
 def create_csr(common_name, country=None, state=None, city=None,
@@ -84,15 +91,18 @@ def create_csr(common_name, country=None, state=None, city=None,
     csr = crypto.dump_certificate_request(
         crypto.FILETYPE_PEM, req)
 
-    return private_key, csr
+    public_key = crypto.dump_publickey(crypto.FILETYPE_PEM, key)
+
+    return private_key, csr, public_key
 
 
 for host in infrastructure.inventory.hosts:
-    priv_key, csr = create_csr(f'{host}{DOMAIN}', country=COUNTRY, state=STATE,
-                               city=CITY, organization=ORG, organizational_unit=OU)
+    private_key, csr, public_key = create_csr(f'{host}{DOMAIN}', country=COUNTRY, state=STATE,
+                                              city=CITY, organization=ORG, organizational_unit=OU)
 
-    with open(f'local_files/csr/keys/{host}.key', 'wb') as f:
-        f.write(priv_key)
+    with open(f'local_files/csr/keys/{host}.pem', 'wb') as f:
+        f.write(private_key)
+        f.write(public_key)
 
     with open(f'local_files/csr/{host}.csr', 'wb') as f:
         f.write(csr)

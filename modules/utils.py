@@ -1,5 +1,7 @@
 import json
 import csv
+import yaml
+from yaml.loader import FullLoader
 
 
 def csv_to_dict(filename):  # Create a phone asset dictionary
@@ -21,3 +23,13 @@ def rd_from_json(filename):
 
 def pj(dict):
     print(json.dumps(dict, indent=4))
+
+
+def readYAML(filename):
+    with open(filename) as file:
+        return yaml.load(file, Loader=FullLoader)
+
+
+def writeYAML(filename, data):
+    with open(filename, 'w') as file:
+        yaml.dump(data, file, default_flow_style=False)

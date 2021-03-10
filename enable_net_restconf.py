@@ -9,15 +9,13 @@ from tqdm import tqdm
 
 from pprint import pprint as pp
 
-# nr = InitNornir("files/config.yaml")
-nr = InitNornir("files/gns_config.yaml")
-cib_infra = nr.filter(F(groups__contains='infrastructure'))
+nr = InitNornir("files/config.yaml")
+infrastructure = nr.filter(F(groups__contains='infrastructure'))
 core = nr.filter(F(groups__contains='core'))
 access = nr.filter(F(groups__contains='access'))
 
 
-# miko_nr = InitNornir("files/netmiko_config.yaml")
-miko_nr = InitNornir("files/gnsmiko_config.yaml")
+miko_nr = InitNornir("files/netmiko_config.yaml")
 miko_core = miko_nr.filter(F(groups__contains='core'))
 miko_access = miko_nr.filter(F(groups__contains='access'))
 
@@ -87,22 +85,22 @@ def enable_net_restconf(task, napalm_get_bar=None):
     """
     if str(task.host) in nr.filter(F(groups__contains='core')).inventory.hosts:
         commands = [
-            'feature nxapi',
+            # 'feature nxapi',
             # 'nxapi http port 8080',
             # 'nxapi https port 8443',
             'feature netconf',
-            'feature restconf',
-            'nxapi http port 80',
-            'nxapi https port 443',
-            'nxapi sandbox'
+            # 'feature restconf',
+            # 'nxapi http port 80',
+            # 'nxapi https port 443',
+            # 'nxapi sandbox'
         ]
 
     elif str(task.host) in nr.filter(F(groups__contains='access')).inventory.hosts:
         commands = [
             'netconf-yang',
             'netconf-yang feature candidate-datastore',
-            'restconf',
-            'ip http secure-server'
+            # 'restconf',
+            # 'ip http secure-server'
         ]
 
     r = task.run(task=netmiko_send_config, config_commands=commands)
@@ -125,11 +123,11 @@ def post_net_restconf(task, napalm_get_bar=None):
 
     if str(task.host) in nr.filter(F(groups__contains='core')).inventory.hosts:
         commands = [
-            'show run | grep nxapi',
-            'show nxapi',
-            'show feature | grep nxapi',
+            # 'show run | grep nxapi',
+            # 'show nxapi',
+            # 'show feature | grep nxapi',
             'show feature | grep netconf',
-            'show feature | grep restconf'
+            # 'show feature | grep restconf'
         ]
 
     elif str(task.host) in nr.filter(F(groups__contains='access')).inventory.hosts:
@@ -160,7 +158,8 @@ def main():
     ######## Pre-Implementation copy-run  ########
     ##############################################
 
-    # print(cib_infra.inventory.hosts)
+    # Get pre-implementation running-configs
+    save_config(infrastructure, pre=True, post=False)
 
     ##############################################
     ####### Configure NETCONF and RESTCONF #######
@@ -187,7 +186,7 @@ def main():
     ##############################################
 
     # Get post-implementation running-configs
-    # save_config(cib_infra, pre=False, post=True)
+    save_config(infrastructure, pre=False, post=True)
 
 
 if __name__ == '__main__':
