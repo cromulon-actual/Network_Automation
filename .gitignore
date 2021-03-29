@@ -134,11 +134,18 @@ dmypy.json
 # Local files
 saved/
 local_files/
+host_files/
 test_scripts/
 inventory/
 devel_folder/
 modules/nice.py
+z_test_files/
 .DS_Store
+share/
+SimpleCIB/
+yang/
+src/
+etc/
 
 # Hidden Modules
 modules/nice
